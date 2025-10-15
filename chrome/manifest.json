@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "BerryPeek - Link Preview & Quick Peek",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Preview links in an elegant overlay with Shift+Click, inspired by Arc browser.",
   "permissions": [
     "declarativeNetRequest",

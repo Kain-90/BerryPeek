@@ -1,0 +1,55 @@
+{
+  "manifest_version": 3,
+  "name": "BerryPeek",
+  "version": "1.0.0",
+  "description": "Preview links in an elegant overlay with Shift+Click, inspired by Arc browser.",
+  "permissions": [
+    "contextMenus",
+    "declarativeNetRequest",
+    "declarativeNetRequestWithHostAccess"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "icons": {
+    "16": "static/icon.png",
+    "32": "static/icon.png",
+    "48": "static/icon.png",
+    "128": "static/icon.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "css": ["content.css"],
+      "js": ["content.js"],
+      "run_at": "document_end"
+    }
+  ],
+  "declarative_net_request": {
+    "rule_resources": [
+      {
+        "id": "remove_frame_headers",
+        "enabled": true,
+        "path": "rules.json"
+      }
+    ]
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "iframe.html", 
+        "iframe.css", 
+        "iframe.js",
+        "static/refresh.svg",
+        "static/link.svg",
+        "static/check.svg",
+        "static/open.svg",
+        "static/close.svg"
+      ],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}

@@ -9,6 +9,7 @@
 - **Quick Preview**: Hold `Shift` and click any link to preview it in a beautiful overlay
 - **Arc-Inspired Design**: Elegant and modern UI inspired by [Arc browser's Peek feature](https://resources.arc.net/hc/en-us/articles/19335302900887-Peek-Preview-Sites-From-Pinned-Tabs)
 - **Seamless Integration**: Works on any webpage without interrupting your workflow
+- **Smart Frame Detection**: Automatically detects `X-Frame-Options` headers and opens links in new tabs when iframe embedding is restricted
 - **Easy Navigation**: 
   - Refresh the preview
   - Open in new tab
@@ -63,6 +64,18 @@ chrome/
 ## 💡 Inspiration
 
 This extension brings the beloved [Peek feature from Arc browser](https://resources.arc.net/hc/en-us/articles/19335302900887-Peek-Preview-Sites-From-Pinned-Tabs) to Chrome and other Chromium-based browsers. Arc's Peek allows you to quickly preview links without leaving your current page, and we wanted to make this productivity boost available to everyone.
+
+## 🔒 X-Frame-Options Handling
+
+BerryPeek intelligently handles websites that restrict iframe embedding through `X-Frame-Options` headers:
+
+- **X-Frame-Options: deny** - Links are automatically opened in a new tab
+- **X-Frame-Options: sameorigin** - Links are checked against the current page's origin:
+  - Same origin: Opens in preview overlay
+  - Different origin: Opens in a new tab
+- **No restriction** - Opens in preview overlay as normal
+
+This ensures a smooth user experience without security warnings or failed previews.
 
 ## 🤝 Contributing
 

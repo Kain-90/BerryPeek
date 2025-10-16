@@ -12,6 +12,10 @@
         {
           "header": "Frame-Options",
           "operation": "remove"
+        },
+        {
+          "header": "Content-Security-Policy",
+          "operation": "remove"
         }
       ]
     },
@@ -24,13 +28,7 @@
     "id": 2,
     "priority": 1,
     "action": {
-      "type": "modifyHeaders",
-      "responseHeaders": [
-        {
-          "header": "Content-Security-Policy",
-          "operation": "remove"
-        }
-      ]
+      "type": "upgradeScheme"
     },
     "condition": {
       "urlFilter": "*",

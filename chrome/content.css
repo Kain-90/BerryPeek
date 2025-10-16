@@ -1,5 +1,60 @@
 /* berrypeek Overlay Styles */
 
+/* Reset all inherited styles for shadow DOM elements */
+:host {
+  all: initial;
+}
+
+/* Base reset for all elements inside shadow DOM */
+* {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  vertical-align: baseline;
+  box-sizing: border-box;
+  line-height: normal;
+  text-align: left;
+  text-decoration: none;
+  list-style: none;
+  color: inherit;
+}
+
+/* CSS Custom Properties for Theming */
+#berrypeek-overlay {
+  /* Light theme (default) */
+  --bg-overlay: rgba(0, 0, 0, 0.5);
+  --bg-container: #ffffff;
+  --bg-header: #f5f5f5;
+  --bg-header-button: #ffffff;
+  --bg-header-button-hover: #e8e8e8;
+  --border-color: #e0e0e0;
+  --text-primary: #333333;
+  --text-secondary: #666666;
+  --bg-button: rgb(20, 20, 20);
+  --bg-button-hover: rgb(40, 40, 40);
+  --shadow-button: rgba(180, 160, 255, 0.253);
+  --shadow-button-hover: rgba(180, 160, 255, 0.4);
+  --iframe-bg: #ffffff;
+}
+
+/* Dark theme */
+#berrypeek-overlay[data-theme="dark"] {
+  --bg-overlay: rgba(0, 0, 0, 0.7);
+  --bg-container: #1e1e1e;
+  --bg-header: #2d2d2d;
+  --bg-header-button: #3d3d3d;
+  --bg-header-button-hover: #4d4d4d;
+  --border-color: #404040;
+  --text-primary: #e8e6e3;
+  --text-secondary: #b0b0b0;
+  --bg-button: rgb(60, 60, 60);
+  --bg-button-hover: rgb(80, 80, 80);
+  --shadow-button: rgba(180, 160, 255, 0.3);
+  --shadow-button-hover: rgba(180, 160, 255, 0.5);
+  --iframe-bg: #1e1e1e;
+}
+
 /* Animations */
 @keyframes berrypeek-fadeIn {
   from {
@@ -32,18 +87,18 @@
 
 /* Overlay */
 #berrypeek-overlay {
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 2147483646;
+  background: var(--bg-overlay);
   display: flex;
   align-items: center;
   justify-content: center;
   backdrop-filter: blur(4px);
   animation: berrypeek-fadeIn 0.2s ease-out;
+  pointer-events: auto;
 }
 
 /* Wrapper for container and buttons */
@@ -61,7 +116,7 @@
   height: 90vh;
   max-width: 1400px;
   max-height: 900px;
-  background: white;
+  background: var(--bg-container);
   border-radius: 12px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   overflow: hidden;
@@ -75,9 +130,10 @@
   align-items: center;
   gap: 12px;
   padding: 8px 16px;
-  background: #f5f5f5;
-  border-bottom: 1px solid #e0e0e0;
+  background: var(--bg-header);
+  border-bottom: 1px solid var(--border-color);
   flex-shrink: 0;
+  position: relative;
 }
 
 /* Header Buttons Container */
@@ -92,7 +148,7 @@
   width: 28px;
   height: 28px;
   border: none;
-  background: white;
+  background: var(--bg-header-button);
   border-radius: 6px;
   cursor: pointer;
   display: flex;
@@ -110,7 +166,7 @@
 }
 
 .berrypeek-header-button:hover {
-  background: #e8e8e8;
+  background: var(--bg-header-button-hover);
 }
 
 .berrypeek-header-button:hover img {
@@ -125,7 +181,7 @@
 .berrypeek-url {
   font-family: system-ui, -apple-system, sans-serif;
   font-size: 13px;
-  color: #666;
+  color: var(--text-secondary);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -145,13 +201,13 @@
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  background-color: rgb(20, 20, 20);
+  background-color: var(--bg-button);
   border: none;
   font-weight: 600;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0px 0px 0px 4px rgba(180, 160, 255, 0.253);
+  box-shadow: 0px 0px 0px 4px var(--shadow-button);
   cursor: pointer;
   transition-duration: 0.3s;
   overflow: hidden;
@@ -166,15 +222,15 @@
 }
 
 .berrypeek-button:hover {
-  background: rgb(40, 40, 40);
-  box-shadow: 0px 0px 0px 6px rgba(180, 160, 255, 0.4);
+  background: var(--bg-button-hover);
+  box-shadow: 0px 0px 0px 6px var(--shadow-button-hover);
 }
 
 /* Iframe Wrapper */
 .berrypeek-iframe-wrapper {
   flex: 1;
   position: relative;
-  background: white;
+  background: var(--iframe-bg);
   overflow: hidden;
 }
 
@@ -182,5 +238,61 @@
   width: 100%;
   height: 100%;
   border: none;
+}
+
+/* Theme Container */
+.berrypeek-theme-container {
+  position: relative;
+  display: inline-block;
+}
+
+/* Theme Dropdown */
+.berrypeek-theme-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  background: var(--bg-header-button);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 6px;
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  z-index: 1000;
+  min-width: 100px;
+}
+
+.berrypeek-theme-dropdown.show {
+  display: flex;
+}
+
+.berrypeek-theme-option {
+  padding: 8px 16px;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 13px;
+  color: var(--text-primary);
+  text-align: left;
+  transition: background 0.2s;
+  position: relative;
+}
+
+.berrypeek-theme-option:hover {
+  background: var(--bg-header-button-hover);
+}
+
+.berrypeek-theme-option.active {
+  font-weight: 600;
+}
+
+.berrypeek-theme-option.active::before {
+  content: '✓';
+  position: absolute;
+  left: 4px;
+  color: var(--text-primary);
 }
 

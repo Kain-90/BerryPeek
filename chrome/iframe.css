@@ -8,10 +8,34 @@ html, body {
   overflow: hidden;
 }
 
+/* CSS Custom Properties for Theming */
+html {
+  /* Light theme (default) */
+  --bg-error: #fafafa;
+  --text-primary: #333;
+  --text-secondary: #666;
+  --border-color: #e0e0e0;
+  --bg-input: white;
+  --button-bg: #3f51b5;
+  --button-hover: #303f9f;
+}
+
+/* Dark theme */
+html[data-theme="dark"] {
+  --bg-error: #1e1e1e;
+  --text-primary: #e8e6e3;
+  --text-secondary: #b0b0b0;
+  --border-color: #404040;
+  --bg-input: #2d2d2d;
+  --button-bg: #5568c5;
+  --button-hover: #4557a5;
+}
+
 iframe {
   width: 100%;
   height: 100%;
   border: none;
+  transition: filter 0.3s ease;
 }
 
 /* Loading State */
@@ -21,7 +45,7 @@ iframe {
   justify-content: center;
   height: 100%;
   font-family: system-ui, -apple-system, sans-serif;
-  color: #666;
+  color: var(--text-secondary);
 }
 
 /* Error State */
@@ -34,7 +58,7 @@ iframe {
   padding: 40px;
   font-family: system-ui, -apple-system, sans-serif;
   text-align: center;
-  background: #fafafa;
+  background: var(--bg-error);
 }
 
 .iframe-error-icon {
@@ -47,13 +71,13 @@ iframe {
   margin: 0 0 12px 0;
   font-size: 20px;
   font-weight: 500;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .iframe-error-message {
   margin: 0 0 24px 0;
   font-size: 14px;
-  color: #666;
+  color: var(--text-secondary);
   line-height: 1.5;
   max-width: 400px;
 }
@@ -61,18 +85,18 @@ iframe {
 .iframe-error-url {
   margin: 0 0 24px 0;
   padding: 12px 16px;
-  background: white;
-  border: 1px solid #e0e0e0;
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   font-size: 13px;
-  color: #666;
+  color: var(--text-secondary);
   word-break: break-all;
   max-width: 500px;
 }
 
 .iframe-error-button {
   padding: 12px 24px;
-  background: #3f51b5;
+  background: var(--button-bg);
   color: white;
   border: none;
   border-radius: 6px;
@@ -83,6 +107,6 @@ iframe {
 }
 
 .iframe-error-button:hover {
-  background: #303f9f;
+  background: var(--button-hover);
 }
 

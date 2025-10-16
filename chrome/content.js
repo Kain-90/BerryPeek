@@ -1,5 +1,88 @@
 (function () {
   let currentPeekWindow = null;
+  
+  // Theme management
+  const THEME_STORAGE_KEY = 'berrypeek_theme';
+  let currentTheme = 'auto'; // auto, light, dark
+  let systemPrefersDark = false;
+  
+  // Initialize theme system
+  function initTheme() {
+    // Load saved theme preference
+    chrome.storage.sync.get([THEME_STORAGE_KEY], (result) => {
+      currentTheme = result[THEME_STORAGE_KEY] || 'auto';
+    });
+    
+    // Setup system theme detection
+    const darkModeQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    systemPrefersDark = darkModeQuery.matches;
+    
+    // Listen for system theme changes
+    darkModeQuery.addEventListener('change', (e) => {
+      systemPrefersDark = e.matches;
+      if (currentTheme === 'auto' && currentPeekWindow) {
+        applyThemeToWindow(currentPeekWindow.shadowRoot);
+        // No need to update icon for auto mode as it stays the same
+      }
+    });
+  }
+  
+  // Get effective theme (resolve 'auto' to light/dark)
+  function getEffectiveTheme() {
+    if (currentTheme === 'auto') {
+      return systemPrefersDark ? 'dark' : 'light';
+    }
+    return currentTheme;
+  }
+  
+  // Apply theme to shadow root
+  function applyThemeToWindow(shadowRoot) {
+    const effectiveTheme = getEffectiveTheme();
+    const overlay = shadowRoot.querySelector('#berrypeek-overlay');
+    if (overlay) {
+      overlay.setAttribute('data-theme', effectiveTheme);
+    }
+    
+    // Send theme to iframe
+    const iframe = shadowRoot.querySelector('.berrypeek-iframe-wrapper iframe');
+    if (iframe && iframe.contentWindow) {
+      iframe.contentWindow.postMessage({ 
+        type: 'setTheme', 
+        theme: effectiveTheme 
+      }, '*');
+    }
+  }
+  
+  // Save theme preference
+  function saveTheme(theme) {
+    currentTheme = theme;
+    chrome.storage.sync.set({ [THEME_STORAGE_KEY]: theme });
+    if (currentPeekWindow) {
+      applyThemeToWindow(currentPeekWindow.shadowRoot);
+      updateThemeButtonIcon(currentPeekWindow.shadowRoot);
+    }
+  }
+  
+  // Get theme icon based on current theme
+  function getThemeIcon(theme) {
+    const icons = {
+      'auto': chrome.runtime.getURL('static/theme-auto.svg'),
+      'light': chrome.runtime.getURL('static/theme-light.svg'),
+      'dark': chrome.runtime.getURL('static/theme-dark.svg')
+    };
+    return icons[theme] || icons['auto'];
+  }
+  
+  // Update theme button icon
+  function updateThemeButtonIcon(shadowRoot) {
+    const themeIcon = shadowRoot.querySelector('.berrypeek-theme-button img');
+    if (themeIcon) {
+      themeIcon.src = getThemeIcon(currentTheme);
+    }
+  }
+  
+  // Initialize theme on load
+  initTheme();
 
   // More robust link detection
   function findLinkElement(element) {
@@ -16,6 +99,30 @@
     if (currentPeekWindow) {
       closePeekWindow();
     }
+
+    // Create shadow host container
+    const shadowHost = document.createElement('div');
+    shadowHost.id = 'berrypeek-shadow-host';
+    
+    // Set critical styles on shadow host to ensure it's visible and positioned correctly
+    shadowHost.style.cssText = `
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      z-index: 2147483647 !important;
+      pointer-events: auto !important;
+    `;
+    
+    // Attach shadow DOM for style isolation
+    const shadowRoot = shadowHost.attachShadow({ mode: 'open' });
+    
+    // Load CSS into shadow DOM
+    const style = document.createElement('link');
+    style.rel = 'stylesheet';
+    style.href = chrome.runtime.getURL('content.css');
+    shadowRoot.appendChild(style);
 
     // Create overlay
     const overlay = document.createElement('div');
@@ -83,8 +190,66 @@
       });
     };
 
+    // Theme button container
+    const themeContainer = document.createElement('div');
+    themeContainer.className = 'berrypeek-theme-container';
+    
+    // Theme button
+    const themeButton = document.createElement('button');
+    themeButton.className = 'berrypeek-header-button berrypeek-theme-button';
+    themeButton.title = 'Theme: ' + currentTheme.charAt(0).toUpperCase() + currentTheme.slice(1);
+    const themeIcon = document.createElement('img');
+    themeIcon.src = getThemeIcon(currentTheme);
+    themeIcon.alt = 'Theme';
+    themeButton.appendChild(themeIcon);
+    
+    // Theme dropdown
+    const themeDropdown = document.createElement('div');
+    themeDropdown.className = 'berrypeek-theme-dropdown';
+    
+    const themeOptions = [
+      { value: 'auto', label: 'Auto' },
+      { value: 'light', label: 'Light' },
+      { value: 'dark', label: 'Dark' }
+    ];
+    
+    themeOptions.forEach(option => {
+      const optionButton = document.createElement('button');
+      optionButton.className = 'berrypeek-theme-option';
+      optionButton.textContent = option.label;
+      optionButton.onclick = (e) => {
+        e.stopPropagation();
+        saveTheme(option.value);
+        themeDropdown.classList.remove('show');
+        themeButton.title = 'Theme: ' + option.label;
+        // Update checkmarks
+        themeDropdown.querySelectorAll('.berrypeek-theme-option').forEach(btn => {
+          btn.classList.remove('active');
+        });
+        optionButton.classList.add('active');
+      };
+      if (option.value === currentTheme) {
+        optionButton.classList.add('active');
+      }
+      themeDropdown.appendChild(optionButton);
+    });
+    
+    themeButton.onclick = (e) => {
+      e.stopPropagation();
+      themeDropdown.classList.toggle('show');
+    };
+    
+    // Close dropdown when clicking outside
+    overlay.addEventListener('click', () => {
+      themeDropdown.classList.remove('show');
+    });
+    
+    themeContainer.appendChild(themeButton);
+    themeContainer.appendChild(themeDropdown);
+
     headerButtons.appendChild(refreshButton);
     headerButtons.appendChild(copyButton);
+    headerButtons.appendChild(themeContainer);
 
     // URL display
     const urlDisplay = document.createElement('div');
@@ -176,20 +341,29 @@
     };
     document.addEventListener('keydown', escapeHandler);
 
+    // Append overlay to shadow root
+    shadowRoot.appendChild(overlay);
+    
+    // Append shadow host to body
+    document.body.appendChild(shadowHost);
+
     // Store reference
     currentPeekWindow = {
-      overlay,
+      shadowHost,
+      shadowRoot,
       escapeHandler,
       messageHandler: onMessage
     };
-
-    document.body.appendChild(overlay);
+    
+    // Apply initial theme and update icon
+    applyThemeToWindow(shadowRoot);
+    updateThemeButtonIcon(shadowRoot);
   }
 
   // Close peek window
   function closePeekWindow() {
     if (currentPeekWindow) {
-      currentPeekWindow.overlay.remove();
+      currentPeekWindow.shadowHost.remove();
       document.removeEventListener('keydown', currentPeekWindow.escapeHandler);
       if (currentPeekWindow.messageHandler) {
         window.removeEventListener('message', currentPeekWindow.messageHandler);
@@ -220,6 +394,18 @@
   chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.type === 'showPeek' && message.url) {
       createPeekWindow(message.url);
+    }
+  });
+
+  // Listen for messages from iframe
+  window.addEventListener('message', (event) => {
+    // Handle iframe requesting current theme
+    if (event.data && event.data.type === 'requestTheme') {
+      const effectiveTheme = getEffectiveTheme();
+      event.source.postMessage({
+        type: 'setTheme',
+        theme: effectiveTheme
+      }, '*');
     }
   });
 

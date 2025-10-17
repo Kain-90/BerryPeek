@@ -296,3 +296,50 @@
   color: var(--text-primary);
 }
 
+/* Loading State Styles */
+.berrypeek-loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--bg-overlay);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+  animation: berrypeek-fadeIn 0.2s ease-out;
+  pointer-events: auto;
+}
+
+.berrypeek-loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  animation: berrypeek-slideUp 0.3s ease-out;
+}
+
+/* Spinner */
+.berrypeek-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid rgba(180, 160, 255, 0.2);
+  border-top: 4px solid rgba(180, 160, 255, 0.8);
+  border-radius: 50%;
+  animation: berrypeek-spin 1s linear infinite;
+}
+
+#berrypeek-overlay[data-theme="dark"] .berrypeek-spinner {
+  border: 4px solid rgba(180, 160, 255, 0.1);
+  border-top: 4px solid rgba(180, 160, 255, 0.6);
+}
+
+.berrypeek-loading-text {
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 16px;
+  color: var(--text-primary);
+  margin: 0;
+  font-weight: 500;
+}
+

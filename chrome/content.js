@@ -98,6 +98,9 @@
 
   // Check if URL has frame restrictions and handle accordingly
   function checkFrameRestrictionAndPeek(url, linkElement) {
+    // Show loading state immediately
+    createLoadingState(url);
+    
     // Check with background script if this URL has frame restrictions
     chrome.runtime.sendMessage(
       {
@@ -107,14 +110,86 @@
       },
       (response) => {
         if (response && response.blocked) {
-          // If blocked, open in new tab instead
+          // If blocked, close loading and open in new tab instead
+          closeLoadingState();
           window.open(url, "_blank");
         } else {
-          // No restriction, show peek window
+          // No restriction, replace loading state with peek window
+          closeLoadingState();
           createPeekWindow(url);
         }
       }
     );
+  }
+
+  // Create loading state UI
+  function createLoadingState(url) {
+    // Close existing loading state if any
+    if (document.getElementById("berrypeek-loading-host")) {
+      closeLoadingState();
+    }
+
+    // Create shadow host container
+    const shadowHost = document.createElement("div");
+    shadowHost.id = "berrypeek-loading-host";
+
+    // Set critical styles on shadow host
+    shadowHost.style.cssText = `
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      z-index: 2147483647 !important;
+      pointer-events: auto !important;
+    `;
+
+    // Attach shadow DOM for style isolation
+    const shadowRoot = shadowHost.attachShadow({ mode: "open" });
+
+    // Load CSS into shadow DOM
+    const style = document.createElement("link");
+    style.rel = "stylesheet";
+    style.href = chrome.runtime.getURL("content.css");
+    shadowRoot.appendChild(style);
+
+    // Create overlay
+    const overlay = document.createElement("div");
+    overlay.id = "berrypeek-overlay";
+    overlay.className = "berrypeek-loading-overlay";
+
+    // Create loading container
+    const loadingContainer = document.createElement("div");
+    loadingContainer.className = "berrypeek-loading-container";
+
+    // Create spinner
+    const spinner = document.createElement("div");
+    spinner.className = "berrypeek-spinner";
+
+    // Create loading text
+    const loadingText = document.createElement("p");
+    loadingText.className = "berrypeek-loading-text";
+    loadingText.textContent = "Loading preview...";
+
+    loadingContainer.appendChild(spinner);
+    loadingContainer.appendChild(loadingText);
+    overlay.appendChild(loadingContainer);
+    shadowRoot.appendChild(overlay);
+
+    // Append shadow host to body
+    document.body.appendChild(shadowHost);
+
+    // Apply theme to loading state
+    const effectiveTheme = getEffectiveTheme();
+    overlay.setAttribute("data-theme", effectiveTheme);
+  }
+
+  // Close loading state
+  function closeLoadingState() {
+    const loadingHost = document.getElementById("berrypeek-loading-host");
+    if (loadingHost) {
+      loadingHost.remove();
+    }
   }
 
   // Create peek window with iframe

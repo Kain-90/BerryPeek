@@ -27,6 +27,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             blocked: true,
             reason: "HTTP error: " + response.status,
           });
+          return;
         }
 
         // Get X-Frame-Options header

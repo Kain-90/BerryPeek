@@ -61,7 +61,34 @@ function createIframe(url) {
   iframe.onload = function () {
     hasLoaded = true;
     clearTimeout(timeout);
+    console.log("BerryPeek: iframe loaded successfully for", url);
     window.parent.postMessage({ type: "iframeLoaded", success: true }, "*");
+
+    // Try to listen for DOMContentLoaded for better content loading detection
+    try {
+      if (iframe.contentWindow && iframe.contentDocument) {
+        iframe.contentDocument.addEventListener(
+          "DOMContentLoaded",
+          function () {
+            console.log("BerryPeek: iframe content DOM loaded for", url);
+          },
+          { once: true }
+        );
+      }
+    } catch (e) {
+      // Ignore cross-origin errors - we can't access content from other domains
+      console.log("BerryPeek: Cannot access iframe content (cross-origin)");
+    }
+  };
+
+  // Handle iframe loading errors
+  iframe.onerror = function () {
+    console.warn("BerryPeek: iframe loading error for", url);
+    clearTimeout(timeout);
+    showError(url);
+    iframe.remove();
+    currentIframe = null;
+    window.parent.postMessage({ type: "iframeLoaded", success: false }, "*");
   };
 
   iframe.src = url;

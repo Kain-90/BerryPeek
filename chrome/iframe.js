@@ -50,6 +50,10 @@ function createIframe(url) {
   const timeout = setTimeout(function () {
     // If iframe hasn't loaded after 10 seconds, assume it's blocked or failed
     if (!hasLoaded) {
+      if (iframe.contentWindow) {
+        console.log("BerryPeek: BerryPeek: iframe loading incomplete, content window accessible")
+        return;
+      }
       showError(url);
       iframe.remove();
       currentIframe = null;

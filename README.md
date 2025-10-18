@@ -44,7 +44,7 @@ BerryPeek works with all **Chromium-based browsers** including:
    - **Edge**: `edge://extensions/`
    - **Opera**: `opera://extensions/`
 4. Enable "Developer mode" in the top right corner
-5. Click "Load unpacked" and select the downloaded zip file (extract it first if needed)
+5. Click "Load unpacked" and select the downloaded zip file (**extract it first**)
 6. The extension is now installed! 🎉
 
 ### From Source (For Developers)

@@ -107,6 +107,7 @@
   align-items: center;
   gap: 16px;
   animation: berrypeek-slideUp 0.3s ease-out;
+  position: relative;
 }
 
 /* Container */
@@ -116,12 +117,17 @@
   height: 90vh;
   max-width: 1400px;
   max-height: 900px;
+  min-width: 400px;
+  min-height: 300px;
   background: var(--bg-container);
   border-radius: 12px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  touch-action: none;
+  user-select: none;
+  box-sizing: border-box;
 }
 
 /* Header */
@@ -134,6 +140,9 @@
   border-bottom: 1px solid var(--border-color);
   flex-shrink: 0;
   position: relative;
+  cursor: move;
+  touch-action: none;
+  user-select: none;
 }
 
 /* Header Buttons Container */
@@ -341,5 +350,89 @@
   color: var(--text-primary);
   margin: 0;
   font-weight: 500;
+}
+
+/* Resize Handles */
+.berrypeek-resize-handle {
+  position: absolute;
+  background: transparent;
+  z-index: 10;
+}
+
+.berrypeek-resize-handle-top {
+  top: -4px;
+  left: 0;
+  right: 0;
+  height: 8px;
+  cursor: n-resize;
+}
+
+.berrypeek-resize-handle-right {
+  top: 0;
+  right: -4px;
+  bottom: 0;
+  width: 8px;
+  cursor: e-resize;
+}
+
+.berrypeek-resize-handle-bottom {
+  bottom: -4px;
+  left: 0;
+  right: 0;
+  height: 8px;
+  cursor: s-resize;
+}
+
+.berrypeek-resize-handle-left {
+  top: 0;
+  left: -4px;
+  bottom: 0;
+  width: 8px;
+  cursor: w-resize;
+}
+
+.berrypeek-resize-handle-top-left {
+  top: -4px;
+  left: -4px;
+  width: 12px;
+  height: 12px;
+  cursor: nw-resize;
+}
+
+.berrypeek-resize-handle-top-right {
+  top: -4px;
+  right: -4px;
+  width: 12px;
+  height: 12px;
+  cursor: ne-resize;
+}
+
+.berrypeek-resize-handle-bottom-left {
+  bottom: -4px;
+  left: -4px;
+  width: 12px;
+  height: 12px;
+  cursor: sw-resize;
+}
+
+.berrypeek-resize-handle-bottom-right {
+  bottom: -4px;
+  right: -4px;
+  width: 12px;
+  height: 12px;
+  cursor: se-resize;
+}
+
+/* Resize handle hover effect */
+.berrypeek-resize-handle:hover {
+  background: rgba(180, 160, 255, 0.2);
+}
+
+.berrypeek-resize-handle-top-left:hover,
+.berrypeek-resize-handle-top-right:hover,
+.berrypeek-resize-handle-bottom-left:hover,
+.berrypeek-resize-handle-bottom-right:hover {
+  background: rgba(180, 160, 255, 0.3);
+  border-radius: 2px;
 }
 

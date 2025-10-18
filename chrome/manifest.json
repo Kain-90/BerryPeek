@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "BerryPeek - Link Preview & Quick Peek",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Preview links in an elegant overlay with Shift+Click, inspired by Arc browser.",
   "permissions": [
     "storage",
@@ -23,7 +23,7 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["content.js"],
+      "js": ["lib/interact.min.js", "content.js"],
       "run_at": "document_end"
     }
   ],
@@ -43,6 +43,7 @@
         "iframe.html", 
         "iframe.css", 
         "iframe.js",
+        "lib/interact.min.js",
         "static/refresh.svg",
         "static/link.svg",
         "static/check.svg",

@@ -100,7 +100,7 @@
   function checkFrameRestrictionAndPeek(url, linkElement) {
     // Show loading state immediately
     createLoadingState(url);
-    
+
     // Check with background script if this URL has frame restrictions
     chrome.runtime.sendMessage(
       {
@@ -223,6 +223,11 @@
     style.href = chrome.runtime.getURL("content.css");
     shadowRoot.appendChild(style);
 
+    // Load interact.js library
+    const interactScript = document.createElement("script");
+    interactScript.src = chrome.runtime.getURL("lib/interact.min.js");
+    shadowRoot.appendChild(interactScript);
+
     // Create overlay
     const overlay = document.createElement("div");
     overlay.id = "berrypeek-overlay";
@@ -234,6 +239,25 @@
     // Create container
     const container = document.createElement("div");
     container.id = "berrypeek-container";
+
+    // Create resize handles
+    const resizeHandles = [
+      { class: "berrypeek-resize-handle-top", edge: "top" },
+      { class: "berrypeek-resize-handle-right", edge: "right" },
+      { class: "berrypeek-resize-handle-bottom", edge: "bottom" },
+      { class: "berrypeek-resize-handle-left", edge: "left" },
+      { class: "berrypeek-resize-handle-top-left", edge: "topLeft" },
+      { class: "berrypeek-resize-handle-top-right", edge: "topRight" },
+      { class: "berrypeek-resize-handle-bottom-left", edge: "bottomLeft" },
+      { class: "berrypeek-resize-handle-bottom-right", edge: "bottomRight" },
+    ];
+
+    resizeHandles.forEach((handle) => {
+      const handleElement = document.createElement("div");
+      handleElement.className = `berrypeek-resize-handle ${handle.class}`;
+      handleElement.setAttribute("data-edge", handle.edge);
+      container.appendChild(handleElement);
+    });
 
     // Create header
     const header = document.createElement("div");
@@ -460,11 +484,123 @@
     // Apply initial theme and update icon
     applyThemeToWindow(shadowRoot);
     updateThemeButtonIcon(shadowRoot);
+
+    // Initialize interact.js functionality after DOM is ready
+    interactScript.onload = () => {
+      initializeInteract(shadowRoot, wrapper, container, header);
+    };
+  }
+
+  // Initialize interact.js functionality
+  function initializeInteract(shadowRoot, wrapper, container, header) {
+    // Get overlay reference
+    const overlay = shadowRoot.querySelector("#berrypeek-overlay");
+    // Wait a bit for the script to load and execute
+    setTimeout(() => {
+      // Try to access interact from the main window context
+      const interact = window.interact;
+      if (!interact) {
+        console.warn("Interact.js not loaded");
+        return;
+      }
+
+      // Position tracking for wrapper
+      const position = { x: 0, y: 0 };
+
+      // Make wrapper draggable via header
+      interact(header).draggable({
+        listeners: {
+          start(event) {
+            console.log("Drag started");
+          },
+          move(event) {
+            position.x += event.dx;
+            position.y += event.dy;
+
+            wrapper.style.transform = `translate(${position.x}px, ${position.y}px)`;
+          },
+          end(event) {
+            console.log("Drag ended");
+          },
+        },
+        modifiers: [
+          // Restrict dragging to viewport bounds
+          interact.modifiers.restrict({
+            restriction: "parent",
+            endOnly: true,
+          }),
+        ],
+      });
+
+      // Get iframe reference for pointer-events control
+      const iframe = container.querySelector("iframe");
+
+      // Make container resizable
+      interact(container).resizable({
+        edges: {
+          top:
+            ".berrypeek-resize-handle-top, .berrypeek-resize-handle-top-left, .berrypeek-resize-handle-top-right",
+          right:
+            ".berrypeek-resize-handle-right, .berrypeek-resize-handle-top-right, .berrypeek-resize-handle-bottom-right",
+          bottom:
+            ".berrypeek-resize-handle-bottom, .berrypeek-resize-handle-bottom-left, .berrypeek-resize-handle-bottom-right",
+          left:
+            ".berrypeek-resize-handle-left, .berrypeek-resize-handle-top-left, .berrypeek-resize-handle-bottom-left",
+        },
+        corners: {
+          topLeft: ".berrypeek-resize-handle-top-left",
+          topRight: ".berrypeek-resize-handle-top-right",
+          bottomLeft: ".berrypeek-resize-handle-bottom-left",
+          bottomRight: ".berrypeek-resize-handle-bottom-right",
+        },
+        listeners: {
+          start(event) {
+            console.log("Resize started");
+            // Disable iframe pointer events during resize
+            if (iframe) {
+              iframe.style.pointerEvents = "none";
+            }
+            // Temporarily disable overlay click to prevent accidental close during resize
+            overlay.style.pointerEvents = "none";
+          },
+          move(event) {
+            // Only update dimensions, don't change position
+            Object.assign(container.style, {
+              width: `${event.rect.width}px`,
+              height: `${event.rect.height}px`,
+            });
+          },
+          end(event) {
+            console.log("Resize ended");
+            // Re-enable iframe pointer events after resize
+            if (iframe) {
+              iframe.style.pointerEvents = "auto";
+            }
+            // Prevent overlay click from closing window after resize
+            setTimeout(() => {
+              overlay.style.pointerEvents = "auto";
+            }, 10);
+          },
+        },
+        modifiers: [
+          // Restrict resizing to minimum and maximum dimensions
+          interact.modifiers.restrictSize({
+            min: { width: 400, height: 300 },
+            max: { width: 1400, height: 900 },
+          }),
+        ],
+      });
+    }, 100); // Wait 100ms for script to load
   }
 
   // Close peek window
   function closePeekWindow() {
     if (currentPeekWindow) {
+      // Stop any ongoing interactions
+      if (window.interact) {
+        window.interact.stop();
+      }
+
       currentPeekWindow.shadowHost.remove();
       document.removeEventListener("keydown", currentPeekWindow.escapeHandler);
       if (currentPeekWindow.messageHandler) {

@@ -18,6 +18,15 @@
 
 ## 🚀 Installation
 
+### Quick Install (Recommended)
+
+1. Go to the [Releases page](https://github.com/Kain-90/BerryPeek/releases) or download the latest zip file directly from the repository
+2. Download the latest `chrome-*.zip` file
+3. Open Chrome and navigate to `chrome://extensions/`
+4. Enable "Developer mode" in the top right corner
+5. Click "Load unpacked" and select the downloaded zip file (you may need to extract it first)
+6. The extension is now installed! 🎉
+
 ### From Source
 
 1. Clone this repository:

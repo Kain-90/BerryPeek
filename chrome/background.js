@@ -8,8 +8,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
     const urlHostname = new URL(url).hostname;
 
-    // Block short URLs
-    if (BLOCK_DOMAINS.some((domain) => urlHostname.includes(domain))) {
+    if (BLOCK_DOMAINS.some((domain) => urlHostname === domain)) {
       sendResponse({
         blocked: true,
         reason: "blocked short URL",

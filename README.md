@@ -1,8 +1,16 @@
-# BerryPeek
+<div align="center">
+  <img src="https://raw.githubusercontent.com/Kain-90/BerryPeek/975101353d1a8f73a45bc90b1dfbaf0030ebaa3d/chrome/static/icon.png" alt="BerryPeek Logo" width="120" height="120">
+</div>
+
+<h1 align="center">BerryPeek</h1>
 
 > Preview links in an elegant overlay with Shift+Click, inspired by Arc browser's Peek feature.
 
-![Browser Chrome](https://img.shields.io/badge/browser-Chrome-green) ![Browser Dia](https://img.shields.io/badge/browser-Dia-green)
+## 🌐 Supported Browsers
+
+BerryPeek works with all **Chromium-based browsers** including:
+
+![Chrome](https://img.shields.io/badge/Chrome-4285F4?logo=googlechrome&logoColor=white) ![Arc](https://img.shields.io/badge/Arc-000000?logo=arc&logoColor=white) ![Commet](https://img.shields.io/badge/Comet-000000?logoColor=white) ![Microsoft Edge](https://img.shields.io/badge/Microsoft%20Edge-0078D4?logo=microsoftedge&logoColor=white) ![Opera](https://img.shields.io/badge/Opera-FF1B2D?logo=opera&logoColor=white) ![Brave](https://img.shields.io/badge/Brave-FB542B?logo=brave&logoColor=white)
 
 ## ✨ Features
 
@@ -18,16 +26,28 @@
 
 ## 🚀 Installation
 
-### Quick Install (Recommended)
+### Chrome Web Store (Easiest)
 
-1. Go to the [Releases page](https://github.com/Kain-90/BerryPeek/releases) or download the latest zip file directly from the repository
+[![Install from Chrome Web Store](https://img.shields.io/badge/Install%20from-Chrome%20Web%20Store-blue?logo=googlechrome&logoColor=white)](https://chromewebstore.google.com/detail/berrypeek-link-preview-qu/acefdkhifcfklkfobgocedlokcjkchgn)
+
+1. Click the badge above or visit the [Chrome Web Store page](https://chromewebstore.google.com/detail/berrypeek-link-preview-qu/acefdkhifcfklkfobgocedlokcjkchgn)
+2. Click **"Add to Chrome"**
+3. Confirm the installation
+4. The extension is ready to use! 🎉
+
+### Manual Installation (For Other Browsers)
+
+1. Go to the [Releases page](https://github.com/Kain-90/BerryPeek/releases)
 2. Download the latest `chrome-*.zip` file
-3. Open Chrome and navigate to `chrome://extensions/`
+3. Open your browser and navigate to the extensions page:
+   - **Chrome**: `chrome://extensions/`
+   - **Edge**: `edge://extensions/`
+   - **Opera**: `opera://extensions/`
 4. Enable "Developer mode" in the top right corner
-5. Click "Load unpacked" and select the downloaded zip file (you may need to extract it first)
+5. Click "Load unpacked" and select the downloaded zip file (**extract it first**)
 6. The extension is now installed! 🎉
 
-### From Source
+### From Source (For Developers)
 
 1. Clone this repository:
    ```bash
@@ -35,7 +55,10 @@
    cd BerryPeek
    ```
 
-2. Open Chrome and navigate to `chrome://extensions/`
+2. Open your browser and navigate to the extensions page:
+   - **Chrome**: `chrome://extensions/`
+   - **Edge**: `edge://extensions/`
+   - **Opera**: `opera://extensions/`
 
 3. Enable "Developer mode" in the top right corner
 

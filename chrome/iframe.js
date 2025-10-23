@@ -4,29 +4,6 @@ window.parent.postMessage("requestURL", "*");
 // Keep reference to current iframe and URL
 let currentIframe = null;
 let currentUrl = "";
-let currentTheme = "light";
-
-// Apply theme to iframe wrapper
-function applyThemeToWrapper(theme) {
-  currentTheme = theme;
-  document.documentElement.setAttribute("data-theme", theme);
-
-  // Apply theme to iframe content using filter
-  if (currentIframe) {
-    if (theme === "dark") {
-      applyDarkModeFilter(currentIframe);
-    } else if (theme === "light") {
-      currentIframe.style.filter = "none";
-    }
-  }
-}
-
-// Apply filter effect for dark mode (works on all iframes)
-function applyDarkModeFilter(iframe) {
-  // Use filter to create dark mode effect
-  // invert(0.9) for dark effect, hue-rotate(180deg) to fix colors
-  iframe.style.filter = "invert(0.9) hue-rotate(180deg)";
-}
 
 // Function to create/recreate iframe
 function createIframe(url) {
@@ -50,6 +27,10 @@ function createIframe(url) {
   const timeout = setTimeout(function () {
     // If iframe hasn't loaded after 10 seconds, assume it's blocked or failed
     if (!hasLoaded) {
+      if (iframe.contentWindow) {
+        console.log("BerryPeek: BerryPeek: iframe loading incomplete, content window accessible")
+        return;
+      }
       showError(url);
       iframe.remove();
       currentIframe = null;
@@ -97,11 +78,6 @@ function createIframe(url) {
 
 // Receive URL and create iframe
 window.addEventListener("message", function (event) {
-  // Handle theme change
-  if (event.data && event.data.type === "setTheme") {
-    applyThemeToWrapper(event.data.theme);
-    return;
-  }
 
   // Handle refresh command
   if (event.data && event.data.type === "refresh") {
@@ -114,8 +90,6 @@ window.addEventListener("message", function (event) {
   // Handle URL message
   if (typeof event.data === "string" && event.data.startsWith("http")) {
     createIframe(event.data);
-    // Request current theme from parent after creating iframe
-    window.parent.postMessage({ type: "requestTheme" }, "*");
   }
 });
 

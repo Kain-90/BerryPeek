@@ -8,9 +8,7 @@ html, body {
   overflow: hidden;
 }
 
-/* CSS Custom Properties for Theming */
 html {
-  /* Light theme (default) */
   --bg-error: #fafafa;
   --text-primary: #333;
   --text-secondary: #666;
@@ -18,17 +16,6 @@ html {
   --bg-input: white;
   --button-bg: #3f51b5;
   --button-hover: #303f9f;
-}
-
-/* Dark theme */
-html[data-theme="dark"] {
-  --bg-error: #1e1e1e;
-  --text-primary: #e8e6e3;
-  --text-secondary: #b0b0b0;
-  --border-color: #404040;
-  --bg-input: #2d2d2d;
-  --button-bg: #5568c5;
-  --button-hover: #4557a5;
 }
 
 iframe {

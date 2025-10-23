@@ -31,7 +31,7 @@ BerryPeek works with all **Chromium-based browsers** including:
 [![Install from Chrome Web Store](https://img.shields.io/badge/Install%20from-Chrome%20Web%20Store-blue?logo=googlechrome&logoColor=white)](https://chromewebstore.google.com/detail/berrypeek-link-preview-qu/acefdkhifcfklkfobgocedlokcjkchgn)
 
 1. Click the badge above or visit the [Chrome Web Store page](https://chromewebstore.google.com/detail/berrypeek-link-preview-qu/acefdkhifcfklkfobgocedlokcjkchgn)
-2. Click **"Add to Chrome"**
+2. Click **"Add to Chrome"** or like **"Add to Dia"**
 3. Confirm the installation
 4. The extension is ready to use! 🎉
 

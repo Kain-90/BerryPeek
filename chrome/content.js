@@ -42,18 +42,6 @@
     if (overlay) {
       overlay.setAttribute("data-theme", effectiveTheme);
     }
-
-    // Send theme to iframe
-    const iframe = shadowRoot.querySelector(".berrypeek-iframe-wrapper iframe");
-    if (iframe && iframe.contentWindow) {
-      iframe.contentWindow.postMessage(
-        {
-          type: "setTheme",
-          theme: effectiveTheme,
-        },
-        "*"
-      );
-    }
   }
 
   // Save theme preference
@@ -632,21 +620,6 @@
   chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.type === "showPeek" && message.url) {
       checkFrameRestrictionAndPeek(message.url, null);
-    }
-  });
-
-  // Listen for messages from iframe
-  window.addEventListener("message", (event) => {
-    // Handle iframe requesting current theme
-    if (event.data && event.data.type === "requestTheme") {
-      const effectiveTheme = getEffectiveTheme();
-      event.source.postMessage(
-        {
-          type: "setTheme",
-          theme: effectiveTheme,
-        },
-        "*"
-      );
     }
   });
 
